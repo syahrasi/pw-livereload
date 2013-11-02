@@ -1,0 +1,30 @@
+<?php
+
+class Livereload extends WireData implements Module {
+
+	public static function getModuleInfo() {
+
+		return array(
+			'title' => 'Livereload.js',
+			'version' => 001,
+			'summary' => 'Processwire module for livereload.js',
+			'href' => 'http://livereload.com',
+			'singular' => true,
+			'autoload' => true,
+			);
+	}
+
+	public function init() {
+    $this->addHookAfter('Page::render', $this, 'addLivereloadjs');
+	}
+
+   public function addLivereloadjs($event) {
+		$page = $event->object;
+
+		if($page->template == 'admin') return;
+
+    $livereloadjs = "<script>document.write('<script src=\"http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1\"></' + 'script>')</script>";
+    $event->return = str_replace("</head>", $livereloadjs . '</head>', $event->return);
+	}
+
+}
